@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+      <a class="navbar-brand" href="#">Your Platform</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a></li>
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('update_profile') }}">Update Profile</a></li>
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('transactions') }}">Transactions</a></li>
+              <li class="nav-item"><a class="nav-link text-danger" href="{{ url_for('logout') }}">Log Out</a></li>
+          </ul>
+      </div>
+  </div>
+</nav>
+
+<div class="cashout-container" style="max-width: 500px; margin: 100px auto 50px;">
+    <h2 class="text-center mb-4 text-primary">Cash Out</h2>
+    
+    <p class="text-center">Your Current Balance: ₦{{ user.referral_balance }}</p>
+
+    <form action="/cashout" method="POST">
+        <div class="form-group mb-3">
+            <label for="amount">Enter Amount to Cash Out:</label>
+            <input type="number" name="amount" id="amount" class="form-control" placeholder="Enter amount" required>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="bank_name">Bank Name:</label>
+            <input type="text" name="bank_name" id="bank_name" class="form-control" placeholder="Enter your bank name" required>
+        </div>
+
+        <div class="form-group mb-4">
+            <label for="account_number">Account Number:</label>
+            <input type="text" name="account_number" id="account_number" class="form-control" placeholder="Enter your account number" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Cash Out</button>
+    </form>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flash-messages mt-3">
+          {% for category, message in messages %}
+            <li class="alert alert-{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+</div>
+{% endblock %}

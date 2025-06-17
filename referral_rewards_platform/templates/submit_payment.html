@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="alert alert-dismissible fade show mt-3">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Payment</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin-top: 50px;
+        }
+        .card {
+            border-radius: 10px;
+            background: #ffffff;
+            padding: 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #343a40;
+        }
+        .alert-info {
+            background-color: #e9f7fd;
+            border-color: #bde0f5;
+            color: #0c5460;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2 class="text-center mb-4">Submit Payment</h2>
+            <p class="text-center text-muted">
+                Please make your payment to the account below before submitting your details:
+            </p>
+            <div class="alert alert-info text-center">
+                <strong>Account Name:</strong> EMMANUEL CHIDERA ALOKWEM<br>
+                <strong>Account Number:</strong> 6856981107<br>
+                <strong>Bank:</strong> Moniepoint MFB
+            </div>
+            <form action="/submit_payment" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="paymentMethod" class="form-label">Payment Method</label>
+                    <input type="text" class="form-control" id="paymentMethod" name="payment_method" required>
+                </div>
+                <div class="mb-3">
+                    <label for="transactionId" class="form-label">Transaction ID</label>
+                    <input type="text" class="form-control" id="transactionId" name="transaction_id" required>
+                </div>
+                <div class="mb-3">
+                    <label for="paymentDate" class="form-label">Payment Date</label>
+                    <input type="date" class="form-control" id="paymentDate" name="payment_date" required>
+                </div>
+                <div class="mb-3">
+                    <label for="amount" class="form-label">Amount (NGN)</label>
+                    <input type="number" class="form-control" id="amount" name="amount" required>
+                </div>
+                <div class="mb-3">
+                    <label for="proofOfPayment" class="form-label">Proof of Payment</label>
+                    <input type="file" accept="image/png, image/jpeg, application/pdf" class="form-control" id="proofOfPayment" name="proof_of_payment" required>
+                </div>            
+                <button type="submit" class="btn btn-primary w-100">Submit Payment</button>
+            </form>
+        </div>
+    </div>
+</body>
+{% endblock %}

@@ -1,0 +1,58 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">💸 Cashout Requests</h4>
+        </div>
+        <div class="card-body p-4">
+            {% if requests %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>User</th>
+                            <th>Amount</th>
+                            <th>Bank</th>
+                            <th>Account No.</th>
+                            <th>Status</th>
+                            <th>Requested</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in requests %}
+                        <tr class="{% if req.status == 'Pending' %}table-warning{% elif req.status == 'Approved' %}table-success{% elif req.status == 'Rejected' %}table-danger{% endif %}">
+                            <td class="fw-semibold text-dark">{{ req.user.username }}</td>
+                            <td>₦{{ req.amount }}</td>
+                            <td>{{ req.bank_name }}</td>
+                            <td>{{ req.account_number }}</td>
+                            <td class="fw-bold">{{ req.status }}</td>
+                            <td>{{ req.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                {% if req.status == 'Pending' %}
+                                <form method="POST" class="d-flex gap-2 justify-content-center">
+                                    <input type="hidden" name="request_id" value="{{ req.id }}">
+                                    <button name="action" value="approve" class="btn btn-success btn-sm px-3">✔ Approve</button>
+                                    <button name="action" value="reject" class="btn btn-outline-danger btn-sm px-3">✖ Reject</button>
+                                </form>
+                                {% else %}
+                                <span class="badge bg-secondary px-3 py-2">Processed</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center">
+                No cashout requests found.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

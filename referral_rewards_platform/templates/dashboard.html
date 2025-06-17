@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('update_profile') }}">Update Profile</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('transactions') }}">Transactions</a></li>
+                <li class="nav-item"><a class="nav-link text-danger" href="{{ url_for('logout') }}">Log Out</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5 pt-4">
+    <!-- Welcome Section -->
+    <div class="row">
+        <div class="col-12 text-center">
+            <h2 class="text-primary fw-bold">Welcome, {{ user.username }}!</h2>
+            <p class="text-muted">Manage your referrals and track your earnings.</p>
+        </div>
+    </div>
+
+    <!-- Dashboard Overview -->
+    <div class="row mt-4">
+        <!-- Referral Code -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-primary shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Your Referral Code</h5>
+                    <p>Invite friends using this link:</p>
+                    <div class="input-group">
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="referralLink"
+                            value="{{ request.host_url }}register?ref={{ user.referral_code }}"
+                            readonly
+                        />
+                        <button class="btn btn-outline-primary" onclick="copyToClipboard()">Copy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Earnings -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-success shadow-sm text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Total Earnings</h5>
+                    <h3 class="text-success fw-bold">₦{{ total_earnings }}</h3>
+                    <form method="POST" action="{{ url_for('cashout') }}">
+                        <button
+                            type="submit"
+                            class="btn btn-primary mt-3"
+                            {% if total_earnings <= 0 %}disabled{% endif %}
+                        >
+                            Cash Out
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Referrals Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Your Referrals</h5>
+                    <ul class="list-group">
+                        {% if referrals %}
+                            {% for referral in referrals %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ referral.username }}</strong><br>
+                                        <small>Joined: {{ referral.date_joined if referral.date_joined != "Not Available" else "Not Available" }}</small><br>
+                                        <small>Status: {{ referral.payment_status }}</small>
+                                    </div>
+                                    <span class="badge {% if referral.payment_status == 'Paid' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                                        {{ referral.payment_status }}
+                                    </span>
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="list-group-item text-center text-muted">
+                                No referrals yet. Share your code to earn!
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Button -->
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <a href="{{ url_for('logout') }}" class="btn btn-danger">Log Out</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyToClipboard() {
+        const input = document.getElementById('referralLink');
+        input.select();
+        input.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(input.value).then(() => {
+            alert('Referral link copied!');
+        }).catch(err => {
+            alert('Failed to copy!');
+        });
+    }
+
+    function confirmCashOut() {
+        if (confirm('Are you sure you want to cash out your earnings?')) {
+            document.querySelector('form[action="/cashout"]').submit();
+        }
+    }
+</script>
+{% endblock %}         

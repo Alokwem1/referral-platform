@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}UNI-REF Platform{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        .navbar-brand, .nav-link {
+            color: #fff !important;
+        }
+        footer {
+            margin-top: auto;
+            padding: 1rem 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            text-align: center;
+        }
+        .card {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #000;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+<body>
+    <main class="container mt-4">
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>© 2024 UNI-REF. All rights reserved.</p>
+    </footer>
+    <div id="logout-modal" class="modal">
+        <div class="modal-content">
+          <p>Are you sure you want to log out?</p>
+          <button class="btn" id="confirm-logout">Yes, Log Out</button>
+          <button class="btn" id="cancel-logout">Cancel</button>
+        </div>
+      </div>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h1 class="text-center">Admin Dashboard</h1>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <div class="mb-3">
+            <a href="{{ url_for('view_cashout_requests') }}" class="btn btn-primary">View Cashout Requests</a>
+            <a href="{{ url_for('admin_logout') }}" class="btn btn-danger">Logout</a>
+        </div>
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>User ID</th>
+                    <th>Payment Method</th>
+                    <th>Transaction ID</th>
+                    <th>Payment Date</th>
+                    <th>Amount</th>
+                    <th>Proof</th>
+                    <th>Status</th>
+                    <th>Admin Comment</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments.items %}
+                <tr>
+                    <td>{{ payment.id }}</td>
+                    <td>{{ payment.user_id }}</td>
+                    <td>{{ payment.payment_method }}</td>
+                    <td>{{ payment.transaction_id }}</td>
+                    <td>{{ payment.payment_date.strftime('%Y-%m-%d') if payment.payment_date else 'N/A' }}</td>
+                    <td>₦{{ "{:,}".format(payment.amount) }}</td>
+                    <td>
+                        {% if payment.proof %}
+                            <a href="{{ url_for('static', filename='uploads/' + payment.proof) }}" target="_blank">
+                                <img src="{{ url_for('static', filename='uploads/' + payment.proof) }}" alt="Proof" width="100">
+                            </a>
+                        {% else %}
+                            <span class="text-danger">No Proof</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ payment.status }}</td>
+                    <td>{{ payment.admin_comment or 'None' }}</td>
+                    <td>
+                        <form method="POST">
+                            {{ forms[payment.id].hidden_tag() }}
+
+                            <textarea class="form-control mb-2"
+                                      name="{{ forms[payment.id].comment.name }}"
+                                      placeholder="Add comment...">{{ forms[payment.id].comment.data or '' }}</textarea>
+
+                            <input type="hidden"
+                                   name="{{ forms[payment.id].payment_id.name }}"
+                                   value="{{ forms[payment.id].payment_id.data }}">
+
+                            <button type="submit"
+                                    name="{{ forms[payment.id].approve.name }}"
+                                    value="1"
+                                    class="btn btn-success btn-sm">Approve</button>
+
+                            <button type="submit"
+                                    name="{{ forms[payment.id].reject.name }}"
+                                    value="1"
+                                    class="btn btn-danger btn-sm">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-between">
+            {% if payments.has_prev %}
+                <a href="{{ url_for('admin_dashboard', page=payments.prev_num) }}" class="btn btn-primary">Previous</a>
+            {% else %}
+                <span></span>
+            {% endif %}
+            {% if payments.has_next %}
+                <a href="{{ url_for('admin_dashboard', page=payments.next_num) }}" class="btn btn-primary ms-auto">Next</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

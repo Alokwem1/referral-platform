@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Transaction History{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+  <h2 class="mb-4 text-center text-primary">Transaction History</h2>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  {% if transactions %}
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Amount (₦)</th>
+          <th scope="col">Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for transaction in transactions %}
+        <tr>
+          <td>{{ transaction.date.strftime('%Y-%m-%d %H:%M:%S') if transaction.date else "Unknown" }}</td>
+          <td>₦{{ '%.2f' % transaction.amount }}</td>
+          <td>{{ transaction.type or "Unknown" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="text-muted text-center">No transactions recorded yet.</p>
+  {% endif %}
+</div>
+{% endblock %}
