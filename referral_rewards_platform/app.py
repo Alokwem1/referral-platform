@@ -916,7 +916,7 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
 
-        # Debugging the update
+        # Initialize referral balances for existing users
         users = User.query.all()
         for user in users:
             print(f"Before Update: {user.username}, Referral Balance: {user.referral_balance}")
@@ -926,4 +926,5 @@ if __name__ == "__main__":
         db.session.commit()
 
     # Run the app
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=False, host="0.0.0.0", port=port)
